@@ -27,9 +27,7 @@
         "twbs/bootstrap": "@stable",
         "shardman/shardman": "dev-master",
         "shardman/symfony-bundle": "dev-master",
-        "imagine/imagine": "@stable",
-        "php-pm/php-pm": "dev-master",
-        "php-pm/httpkernel-adapter": "dev-master"
+        "imagine/imagine": "@stable"
 
     },
     "require-dev": {
