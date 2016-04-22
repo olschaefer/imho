@@ -1,0 +1,21 @@
+admin:
+    resource: "@AdminBundle/Resources/config/routing.yml"
+    prefix:   /admin
+
+#shard_manager:
+#    resource: "@ShardManagerBundle/Resources/config/routing.yml"
+#    prefix:   /
+
+backend:
+    resource: "@BackendBundle/Resources/config/routing.yml"
+    prefix:   /
+
+#app:
+#    resource: "@AppBundle/Controller/"
+#    type:     annotation
+#    prefix: /app
+
+
+oneup_uploader:
+    resource: .
+    type: uploader

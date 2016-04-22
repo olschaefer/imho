@@ -1,0 +1,17 @@
+backend_index:
+    path:     /
+    defaults: { _controller: BackendBundle:Default:index }
+    methods: [GET]
+
+
+backend_view:
+    path:     /view/{originalId}
+    defaults: { _controller: BackendBundle:Default:view }
+    requirements:
+        originalId: "[A-z0-9-]{36}"
+
+backend_delete:
+    path:     /delete/{originalId}
+    defaults: { _controller: BackendBundle:Default:delete }
+    requirements:
+        originalId: "[A-z0-9-]{36}"

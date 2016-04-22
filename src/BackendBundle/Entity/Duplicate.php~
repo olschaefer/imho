@@ -1,0 +1,62 @@
+<?php
+
+
+namespace BackendBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use olegserkov\ShardManagerBundle\Model\ShardedEntity;
+
+/**
+ * Image
+ *
+ * @ORM\Table("duplicate")
+ * @ORM\Entity(repositoryClass="BackendBundle\Entity\Repository\DuplicateRepository")
+ * @ORM\HasLifecycleCallbacks()
+ */
+class Duplicate
+{
+    /**
+     * @var string
+     * @ORM\Id
+     * @ORM\Column(name="file_hash", type="string", length=32, options={"fixed":true})
+     */
+    private $fileHash;
+
+    /**
+     * @var string
+     * @ORM\Column(name="file_id", type="string", length=36, options={"fixed":true})
+     */
+    private $fileId;
+
+    /**
+     * @return string
+     */
+    public function getFileHash()
+    {
+        return $this->fileHash;
+    }
+
+    /**
+     * @param string $fileHash
+     */
+    public function setFileHash($fileHash)
+    {
+        $this->fileHash = $fileHash;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFileId()
+    {
+        return $this->fileId;
+    }
+
+    /**
+     * @param mixed $fileId
+     */
+    public function setFileId($fileId)
+    {
+        $this->fileId = $fileId;
+    }
+}

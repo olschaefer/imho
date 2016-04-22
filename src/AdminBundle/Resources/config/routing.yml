@@ -1,0 +1,8 @@
+admin_homepage:
+    path:     /
+    defaults: { _controller: AdminBundle:Default:index }
+
+admin_delete_image:
+    path:     /delete/
+    methods:  [POST]
+    defaults: { _controller: AdminBundle:Default:delete }

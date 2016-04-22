@@ -1,0 +1,116 @@
+{% extends "BackendBundle:layouts:base.html.twig" %}
+
+{% set columnNumber = 3 %}
+{% set columnGridWidth = 12 / columnNumber %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Statistics:</h2>
+            {% for shardId, shardStats in stats %}
+                {% if loop.index0 % columnNumber == 0 %}
+                    <div class="row">
+                {% endif %}
+
+                    <div class="col-md-{{ columnGridWidth }}">
+                        <h3>{{ shardId }}</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Total number of files <span class="glyphicon glyphicon-info-sign" title="including thumbnails"></span>:</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ shardStats.totalNumber }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Total size:</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ shardStats.totalSize }}
+                            </div>
+                        </div>
+                    </div>
+
+                {% if loop.index0 % columnNumber == columnNumber - 1 %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <hr />
+        </div>
+    </div>
+
+    <script>
+        var processInput = function (e) {
+            e.stopPropagation();
+            var el = e.target;
+            var value = el.value;
+            var re = new RegExp('^http://.+/([A-z0-9-]{36})(?:\.(?:jpg|png|gif))?$');
+            el.value = el.value.replace(re, "$1");
+
+        };
+    </script>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Delete image by id:</h2>
+            <form action="{{ path('admin_delete_image') }}" method="post">
+                <div class="form-group">
+                    <label for="originalIdInput">Image id or link</label>
+                    <input id="originalIdInput" class="form-control" type="text" name="originalId" value="" oninput="processInput(event)" />
+                </div>
+
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Really delete?')">Delete</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <hr />
+        </div>
+    </div>
+
+    <!-- LATEST PHOTOS -->
+    {% set columnNumber = 6 %}
+    {% set columnGridWidth = 12 / columnNumber %}
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>Latest images added:</h2>
+            {% for image in latestImages %}
+                {% if loop.index0 % columnNumber == 0 %}
+                    <div class="row">
+                {% endif %}
+
+                <div class="col-md-{{ columnGridWidth }}">
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div style="display: inline-block; position: relative; left: 139px; top: 11px;">
+                                {% set formId = 'delete-form-' ~ image.originalId %}
+                                <form style="margin-bottom: 0px;" id="{{ formId }}" action="{{ path('admin_delete_image') }}" method="post">
+                                    <input type="hidden" name="originalId" value="{{ image.originalId }}" />
+                                    <a style="padding: 0px 6px;" class="btn btn-danger" title="Delete image" onclick="if (confirm('Really delete?')) { document.getElementById('{{ formId }}').submit()}; return false;" href="javascript: void(0);">x</a>
+                                </form>
+                            </div>
+                            <a href="{{ img_view_url(image) }}"><img style="max-width: 150px;" src="{{ img_direct_url(image) }}" /></a>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% if loop.index0 % columnNumber == columnNumber - 1 %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+
+{% endblock %}

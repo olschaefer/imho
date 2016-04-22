@@ -1,0 +1,287 @@
+<?php
+
+namespace BackendBundle\Entity;
+
+use BackendBundle\Service\Id\Generator\Uuid;
+use Doctrine\ORM\Mapping as ORM;
+use olegserkov\ShardManagerBundle\Model\ShardedEntity;
+use Symfony\Component\HttpFoundation\File\File;
+
+/**
+ * Image
+ *
+ * @ORM\Table("image")
+ * @ORM\Entity(repositoryClass="BackendBundle\Entity\Repository\ImageRepository")
+ * @ORM\HasLifecycleCallbacks()
+ */
+class Image
+{
+    /**
+     * @var string
+     * @ORM\Id
+     * @ORM\Column(name="id", type="string", length=36, options={"fixed":true})
+     */
+    private $id;
+
+    /**
+     * @var string
+     * @ORM\Column(name="parent_id", type="string", length=36, options={"fixed":true})
+     */
+    private $parentId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="path", type="string", length=100, options={"fixed":true})
+     */
+    private $path;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="size", type="integer")
+     */
+    private $size;
+
+    /**
+     * Secret key to manage this image
+     * @var string
+     * @ORM\Column(name="key", type="string", length=36, options={"fixed":true})
+     */
+    private $key;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="user_id", type="integer", nullable=false)
+     */
+    private $userId = 0;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * Bucket id in database
+     * @var int
+     */
+    private $bucket;
+
+    /**
+     * Bucket id in file storage
+     * @var int
+     */
+    private $storageBucket;
+
+    /**
+     * @var File
+     */
+    private $file;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * @param mixed $parentId
+     */
+    public function setParentId($parentId)
+    {
+        $this->parentId = $parentId;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     * @return Image
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue()
+    {
+        $this->setCreatedAt(new \DateTime());
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setSecretKey()
+    {
+        $generator = new Uuid();
+        $this->key = $generator->generate();
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime 
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set size
+     *
+     * @param integer $size
+     * @return Image
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * Get size
+     *
+     * @return integer 
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getShardingKey()
+    {
+        return $this->getId();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param int $userId
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBucket()
+    {
+        return $this->bucket;
+    }
+
+    /**
+     * @param int $bucket
+     */
+    public function setBucket($bucket)
+    {
+        $this->bucket = $bucket;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStorageBucket()
+    {
+        return $this->storageBucket;
+    }
+
+    /**
+     * @param int $storageBucket
+     */
+    public function setStorageBucket($storageBucket)
+    {
+        $this->storageBucket = $storageBucket;
+    }
+
+    /**
+     * @return File
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param File $file
+     */
+    public function setFile($file)
+    {
+        $this->file = $file;
+    }
+
+}

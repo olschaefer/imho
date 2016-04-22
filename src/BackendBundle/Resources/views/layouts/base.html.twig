@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>Image Hosting Script Demo</title>
+        {% stylesheets '@BackendBundle/Resources/public/css/*' '@BackendBundle/Resources/public/bootstrap/css/bootstrap.css' %}
+            <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    </head>
+    <body>
+        <div class="container">
+        {% block body %}
+        {% endblock %}
+        </div>
+        {% block javascripts %}
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,75 @@
+#uploader {
+    margin-top: 20px;
+}
+
+.container-deletion-form {
+    margin-top: 20px;
+}
+
+div.container-view {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-top: 20px;
+    text-align: center
+}
+
+div.container-view img {
+    max-width: 100%;
+}
+
+img.rounded {
+    border-radius: 10px;
+}
+
+img.shadow {
+    box-shadow: #999 5px 5px 10px;
+}
+
+div.uploaded-image-row {
+    margin-top: 40px;
+}
+
+div.uploaded-image-row img {
+    max-width: 400px;
+}
+
+
+
+.qq-upload-list-custom {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+    clear: both;
+}
+
+.qq-upload-list-custom li {
+    margin: 2px 0 0 0;
+    padding: 9px;
+    line-height: 16px;
+    font-size: 16px;
+    color: #424242;
+    background-color: #F6F6F6;
+    border-radius: 6px;
+    border: none !important;
+}
+
+.qq-upload-list-custom li:first-child {
+    border: none;
+}
+
+.qq-upload-list-custom li:last-child,
+.qq-upload-list-custom li.qq-upload-success:last-child {
+    border: none;
+}
+
+.qq-upload-list-custom li.qq-upload-success {
+    background-color: #EBF6E0;
+    color: #424242;
+}
+
+.qq-upload-list-custom li.qq-upload-fail {
+    background-color: #F5D7D7;
+    color: #424242;
+}

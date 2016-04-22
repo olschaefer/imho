@@ -1,0 +1,16 @@
+{% extends "BackendBundle:layouts:base.html.twig" %}
+{% block body %}
+    <div class="row container-deletion-form">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            {{ form(deleteForm) }}
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+
+    <div class="row container-view">
+        <div class="col-md-12">
+            <img class="shadow" src="{{ img_direct_url(image) }}" />
+        </div>
+    </div>
+{% endblock %}

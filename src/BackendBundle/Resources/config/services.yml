@@ -1,0 +1,122 @@
+parameters:
+  storage.baseUrl: http://192.168.99.100:8880/
+  storage.webdav.uri: http://storage_balancer_1/
+  storage.webdav.user: webdav
+  storage.webdav.password: webdav
+
+services:
+  oneup_flysystem.adapter.webdav:
+    class: League\Flysystem\WebDAV\WebDAVAdapter
+    abstract: true
+    public: false
+    arguments: [null, null]
+
+  backend.sabredav_client:
+    class: Sabre\DAV\Client
+    arguments:
+      - {baseUri: "%storage.webdav.uri%", userName: "%storage.webdav.user%", password: "%storage.webdav.password%"}
+
+  backend.sharded_registry:
+    class: Shardman\Symfony\Bundle\Service\ShardedRegistry
+    arguments: ["@doctrine", "@db_shard_manager"]
+
+
+  backend.idGeneratorImpl:
+    class: BackendBundle\Service\Id\Generator\Uuid
+    public: false
+
+
+  backend.idGenerator:
+      class: BackendBundle\Service\Id\Local
+      arguments: ["@backend.idGeneratorImpl"]
+
+
+  backend.uploader_event_listener:
+    class: BackendBundle\EventListener\UploadEventListener
+    arguments: ["@backend.image.action_chain", "@event_dispatcher", "@backend.image_factory"]
+    tags:
+      - { name: "kernel.event_listener", event: "oneup_uploader.post_upload", method: "onUpload"}
+
+
+  backend.image_factory:
+    class: BackendBundle\Factory\ImageFactory
+
+  backend.image_manager:
+    class: BackendBundle\Service\ImageManager
+    arguments: ["@backend.sharded_registry", "@oneup_flysystem.storage_filesystem", "@backend.idGenerator"]
+
+
+  backend.url_generator:
+    class: BackendBundle\Service\UrlGenerator
+    arguments: ["%storage.baseUrl%", "@router"]
+
+  backend.path_generator:
+    class: BackendBundle\Service\PathGenerator
+
+  backend.bbcode_generator:
+    class: BackendBundle\Service\BBCodeGenerator
+
+  backend.twig.extension:
+    class: BackendBundle\Twig\BackendExtension
+    arguments: ["@backend.url_generator", "@backend.bbcode_generator"]
+    tags:
+      - {name: twig.extension}
+
+
+
+
+  ###  START: ACTION CHAIN TO PROCESS UPLOADED IMAGES ###
+
+  backend.image.action_chain:
+    class: BackendBundle\Service\Image\ActionChain
+
+  backend.image.action.generate_variants:
+    class: BackendBundle\Service\Image\Action\GenerateVariants
+    arguments:
+      - "@backend.image_factory"
+      - [] #["@backend.image.variant.thumb150", "@backend.image.variant.thumb300"]
+    tags:
+      - {name: image.action_chain_item, position: before.prepareAttributes}
+
+  #--VARIANTS--#
+  backend.image.variant.thumb150:
+    class: BackendBundle\Service\Image\Variant\ThumbnailVariant
+    arguments: [150, 150]
+
+
+  backend.image.variant.thumb300:
+    class: BackendBundle\Service\Image\Variant\ThumbnailVariant
+    arguments: [300, 300]
+  #--/VARIANTS--#
+
+  backend.image.action.prepare_attributes:
+    class: BackendBundle\Service\Image\Action\PrepareAttributes
+    arguments:
+      - "@backend.idGenerator"
+      - "@db_shard_manager"
+      - "@storage_shard_manager"
+      - "@backend.path_generator"
+    tags:
+      - {name: image.action_chain_item, position: before.save}
+
+  backend.image.action.save:
+    class: BackendBundle\Service\Image\Action\Save
+    arguments: ["@backend.image_manager"]
+    tags:
+      - {name: image.action_chain_item, position: after.prepareAttributes}
+
+  backend.image.action.generate_response:
+    class: BackendBundle\Service\Image\Action\GenerateResponse
+    arguments: ["@backend.url_generator", "@router"]
+    tags:
+      - {name: image.action_chain_item, position: after.save}
+      - {name: kernel.event_listener, event: backend.upload.fail, method: onUploadFail}
+
+  backend.image.action.cleanup:
+    class: BackendBundle\Service\Image\Action\Cleanup
+    tags:
+      - {name: image.action_chain_item, position: after.generateResponse}
+      - {name: kernel.event_listener, event: backend.upload.fail, method: onUploadFail}
+
+
+  ###  END: ACTION CHAIN TO PROCESS UPLOADED IMAGES ###

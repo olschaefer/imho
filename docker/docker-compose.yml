@@ -1,0 +1,43 @@
+db:
+  image: postgres
+  expose:
+    - 5432
+
+storage_balancer:
+  build: ./storage/balancer
+  links:
+    - storage_node
+  ports:
+    - "8880:80"
+
+storage_node:
+  build: ./storage/node
+  ports:
+      - "80"
+#  volumes:
+#    - ../storage:/storage
+
+app_nginx:
+  build: ./app/nginx
+  links:
+    - app_fpm
+  volumes:
+    - ../:/home
+  ports:
+    - "80:80"
+
+
+app_fpm:
+  build: ./app/fpm
+  volumes:
+    - ../:/home
+    - ../../shardman/shardman:/shardman
+    - ../../shardman/shardman-symfony-bundle:/shardman-symfony-bundle
+  links:
+    - db
+    - storage_balancer
+    - storage_node
+
+# docker-compose build && docker-compose scale db=2 storage_node=2 && docker-compose up
+# ./app/console generatelocations storage > ./docker/storage/balancer/storage_balancer_shard_selector.conf
+# docker rm -f $(docker ps -a -q) && docker rmi -f $(docker images -q)

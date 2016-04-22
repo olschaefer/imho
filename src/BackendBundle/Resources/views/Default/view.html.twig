@@ -1,0 +1,58 @@
+{% extends "BackendBundle:layouts:base.html.twig" %}
+{% block body %}
+    <div class="row container-view">
+        <div class="col-md-12">
+            <a href="{{ img_direct_url(image) }}"><img class="shadow" src="{{ img_direct_url(image) }}" /></a>
+        </div>
+    </div>
+
+    <div class="row" id="image-info">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Link:</label>
+                        <input type="text" value="{{ img_view_url(image) }}" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Direct link:</label>
+                        <input type="text" value="{{ img_direct_url(image) }}" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>BBCode:</label>
+                        <input type="text" value="{{ bb_url(img_view_url(image), bb_img(img_direct_url(image))) }}" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>HTML:</label>
+                        <input type="text" value="{{ ('<a href="' ~ img_view_url(image) ~ '"><img src="'~ img_direct_url(image) ~'" /></a>') | e('html_attr') }}" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var inputs = document.getElementById('image-info').querySelectorAll('input');
+        for (var i = 0; i < inputs.length; ++i) {
+            var item = inputs[i];
+            item.onmouseover = function() {
+                this.focus();
+            };
+            item.onfocus = function() {
+                this.select();
+            };
+        }
+    </script>
+{% endblock %}
